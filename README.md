@@ -9,14 +9,31 @@ dashboard.
 
 ## Install
 
-In Claude Code:
+Pick one; they all install the same skill.
+
+**Ask Claude.** Paste this into Claude Code:
+
+```
+Install the nerf-check skill from https://github.com/rig-xyz/nerf-checker: copy its skills/nerf-check folder to ~/.claude/skills/nerf-check. Then run a nerf check.
+```
+
+**One command.** With the [skills CLI](https://github.com/vercel-labs/skills):
+
+```
+npx skills add rig-xyz/nerf-checker -g -a claude-code
+```
+
+`-g` installs it for every project; leave it out to install into the current project only.
+
+**As a plugin.** In Claude Code:
 
 ```
 /plugin marketplace add rig-xyz/nerf-checker
 /plugin install nerf-check@nerf-checker
 ```
 
-Or copy `plugins/nerf-check/skills/nerf-check` into `~/.claude/skills/`.
+It only works in Claude Code (the terminal or the desktop app's Code tab), since it reads Claude Code's local
+transcripts.
 
 Then ask Claude: "run a nerf check", or "did Opus get worse this month?". The first run reads every transcript still
 on disk and tells you how many prompts it will label before it starts. After that it offers to run weekly.
@@ -51,7 +68,7 @@ on disk and tells you how many prompts it will label before it starts. After tha
 It measures your experience, not the model in isolation. The error share moves with how hard the week's work was and
 how patient you were. Read one week against the range of the others, and treat overlapping intervals as no detectable
 change. A fixed benchmark rerun on a schedule answers "did the model change"; this answers "did my work with it
-change". [`references/metrics.md`](plugins/nerf-check/skills/nerf-check/references/metrics.md) has every column and
+change". [`references/metrics.md`](skills/nerf-check/references/metrics.md) has every column and
 its limits.
 
 The judge is a model too, so each label records which judge model and prompt produced it, each run re-judges a sample
@@ -60,7 +77,7 @@ to measure the judge's consistency, and the report says when the judge changed.
 ## Configuration
 
 Optional, in `~/.claude/nerf-check/config.json`. Every key and its default is documented in
-[`scripts/common.py`](plugins/nerf-check/skills/nerf-check/scripts/common.py). The ones most people set:
+[`scripts/common.py`](skills/nerf-check/scripts/common.py). The ones most people set:
 
 | Key | What it does |
 |---|---|
@@ -88,7 +105,7 @@ python3 tests/test_pipeline.py
 
 Runs the whole pipeline on made-up transcripts in a temp folder. No packages, no network.
 
-The skill lives in `plugins/nerf-check/skills/nerf-check`: `SKILL.md` is what Claude follows, `scripts/` does the
+The skill lives in `skills/nerf-check`: `SKILL.md` is what Claude follows, `scripts/` does the
 counting, `references/` explains the numbers, and `assets/` holds the dashboard page and the judge prompt. Changing
 the judge prompt starts a new series, since labels are only comparable under the same instructions.
 

@@ -7,7 +7,7 @@ judge itself, and checks the numbers and what is left on disk.
 """
 import csv, datetime as dt, json, os, subprocess, sys, tempfile
 
-SCRIPTS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'plugins', 'nerf-check', 'skills', 'nerf-check', 'scripts')
+SCRIPTS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'skills', 'nerf-check', 'scripts')
 TMP = tempfile.mkdtemp(prefix='nerf-check-test-')
 ENV = dict(os.environ, NERF_CHECK_HOME=os.path.join(TMP, 'home'), NERF_CHECK_TRANSCRIPTS=os.path.join(TMP, 'projects'))
 ENV.pop('CLAUDE_CONFIG_DIR', None)

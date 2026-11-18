@@ -19,7 +19,7 @@
         "transcripts",
         "dashboard"
       ],
-      "source": "./plugins/nerf-check"
+      "source": "./"
     }
   ]
 }
