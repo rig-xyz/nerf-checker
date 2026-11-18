@@ -1,0 +1,562 @@
+<meta name="dash-one-writer">
+<style>
+  .nc { display: flex; flex-direction: column; gap: var(--cds-gap-xl); max-width: 1080px; }
+  .nc h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
+  .nc h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; text-wrap: balance; }
+  .nc .lede { color: var(--color-fg); max-width: 68ch; margin: var(--cds-gap-sm) 0 0; line-height: 1.5; }
+  .nc .muted { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); line-height: 1.45; max-width: 72ch; margin: 0; }
+  .nc .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--cds-gap-md); }
+  .nc .tile { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: flex; flex-direction: column; gap: var(--cds-gap-xs); min-width: 0; }
+  .nc .tile .k { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); letter-spacing: .02em; }
+  .nc .tile .v { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: 2.1rem; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .nc .sec { display: flex; flex-direction: column; gap: var(--cds-gap-sm); min-width: 0; }
+  .nc .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: var(--cds-gap-xl); }
+  .nc .chart { position: relative; min-height: 240px; width: 100%; }
+  .nc .chart svg { display: block; overflow: visible; }
+  .nc .chart text { fill: var(--cds-text-secondary); font-size: var(--cds-font-size-caption); font-family: var(--font-anthropic-sans); }
+  .nc .chart .axis path, .nc .chart .axis line { stroke: var(--cds-chart-axis); }
+  .nc .chart .grid line { stroke: var(--cds-chart-grid); }
+  .nc .chart .grid path { display: none; }
+  .nc .tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); box-shadow: var(--cds-shadow-popover); border-radius: var(--cds-radius); padding: 6px 9px; font-size: var(--cds-font-size-caption); color: var(--color-fg); white-space: nowrap; z-index: 2; }
+  .nc .legend { display: flex; gap: var(--cds-gap-md); flex-wrap: wrap; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .nc .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+  .nc .tw { overflow-x: auto; }
+  .nc table { border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; min-width: 760px; width: 100%; }
+  .nc th, .nc td { padding: 6px 10px; text-align: right; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+  .nc th:first-child, .nc td:first-child { text-align: left; }
+  .nc h3 { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: 0; }
+  .nc table.narrow { min-width: 420px; }
+  .nc #model-table th:nth-child(2), .nc #model-table td:nth-child(2), .nc #switch-table th:nth-child(5), .nc #switch-table td:nth-child(5), .nc #harness-table th:nth-child(2), .nc #harness-table td:nth-child(2), .nc #harness-table th:nth-child(4), .nc #harness-table td:nth-child(4) { text-align: left; }
+  .nc .legend:empty { display: none; }
+  .nc th { color: var(--color-fg-muted); font-weight: var(--cds-font-weight-medium); vertical-align: bottom; white-space: normal; }
+  .nc details { border-top: 1px solid var(--color-border-line); padding-top: var(--cds-pad-md); }
+  .nc summary { cursor: pointer; font-weight: var(--cds-font-weight-medium); }
+  .nc details p, .nc details li { line-height: 1.5; max-width: 72ch; }
+  .nc details ul { padding-left: 1.2em; }
+  [data-dash-source-state=refreshing] { opacity: .5; }
+</style>
+
+<div class="nc">
+  <header id="top">
+    <h1>Claude Code nerf check</h1>
+    <p class="lede">Since <span data-draw="since" data-source="weekly" data-field="week_of" data-row="0">—</span> you sent <b data-draw="turns" data-source="overall" data-field="turns" data-row="0">—</b> prompts to <span data-draw="primary" data-source="weekly" data-field="model" data-row="0">—</span> in Claude Code. Your next message corrected a real mistake after <b data-draw="errAll" data-source="overall" data-field="err" data-row="0">—</b>% of them. The latest full week's rate is <b data-draw="errLast" data-source="weekly" data-field="err">—</b>%, <span data-draw="verdict">—</span> the <b data-draw="lo" data-source="earlier" data-field="lo" data-row="0">—</b>–<b data-draw="hi" data-source="earlier" data-field="hi" data-row="0">—</b>% range of earlier weeks.</p>
+  </header>
+
+  <div class="tiles" id="tiles">
+    <div class="tile"><span class="k">Prompts analysed (<span data-draw="primary" data-source="weekly" data-field="model" data-row="0">—</span>)</span><span class="v" data-draw="turns2" data-source="overall" data-field="turns" data-row="0">—</span></div>
+    <div class="tile"><span class="k">Followed by a correction, all weeks</span><span class="v"><span data-draw="errAll2" data-source="overall" data-field="err" data-row="0">—</span>%</span></div>
+    <div class="tile"><span class="k">Followed by a correction, latest full week</span><span class="v"><span data-draw="errLast2" data-source="weekly" data-field="err">—</span>%</span></div>
+    <div class="tile"><span class="k">Median thinking per prompt, latest full week (tokens)</span><span class="v" data-draw="thinkLast" data-source="weekly" data-field="think_med">—</span></div>
+  </div>
+
+  <section class="sec" id="weekly-errors">
+    <h2>Share of prompts your next message corrected, by week</h2>
+    <p class="muted">A judge model read each of your follow-up messages and labelled it as an error correction, a redirect (new taste or requirement, no mistake), a go-ahead, or a new task. Dots show the error share, whiskers the 95% interval. The interval resamples whole sessions, because corrections come in runs: one session that goes badly produces several. Overlapping whiskers mean no detectable change.</p>
+    <div class="chart" data-draw="weeklyChart" data-source="weekly"></div>
+  </section>
+
+  <section class="sec" id="by-model">
+    <h2>Models side by side, by week</h2>
+    <p class="muted">Every model you sent enough prompts to in a week. The models did not get the same work, and may not have run at the same effort level, so read this as a side-by-side, not an experiment. The table shows the weeks in which more than one model has a row.</p>
+    <div class="legend" data-draw="modelLegend"></div>
+    <div class="chart" data-draw="modelChart" data-source="weekly_model"></div>
+    <div class="tw">
+      <table data-source="weekly_model" data-row-key="week_of,model" id="model-table">
+        <thead><tr>
+          <th data-field="week_of">Week of</th>
+          <th data-field="model">Model</th>
+          <th data-field="n">Prompts</th>
+          <th data-field="err">Corrected %</th>
+          <th data-field="think_med">Thinking / prompt (median tok)</th>
+          <th data-field="think_per_call">Thinking / API call (mean tok)</th>
+          <th data-field="out_med">Output / prompt (median tok)</th>
+          <th data-field="tools_med">Tool calls / prompt (median)</th>
+          <th data-field="tool_err">Tool errors %</th>
+          <th data-field="read_edit">Read : edit</th>
+          <th data-field="concede">"You're right"</th>
+          <th data-field="redirect">Redirected %</th>
+          <th data-field="ctx_med_k">Context at prompt start (median k)</th>
+          <th data-field="compaction">Hit a compaction %</th>
+        </tr></thead>
+        <tbody data-draw="modelRows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="sec" id="switches">
+    <h2>Sessions you gave up on: moved off <span data-draw="primary" data-source="weekly" data-field="model" data-row="0">—</span>, or started over</h2>
+    <p class="muted">Changing model partway through a session is your own verdict on how it was going, and the correction share misses it: frustration builds over a long session rather than showing as one correction. In the latest full week you moved <b data-draw="swLast" data-source="switches" data-field="switches">—</b> of <b data-draw="swSessions" data-source="switches" data-field="sessions">—</b> sessions to another model. "Said it struggled" means your first message to the new model called the old one confused, stuck, nerfed or similar; it is a keyword match in English, not a judge. A switch counts in the week of the first prompt on the new model, and moving a small job to a cheaper model counts too. Started over counts sessions of two prompts or more that went quiet for good with a new session opened in the same folder within 15 minutes; "with the same ask" means the new session's first message asked for much the same thing. This is the one place a session abandoned without a word shows up, and it also catches plain task changes, so read it as a tally.</p>
+    <div class="tw">
+      <table data-source="switches" data-row-key="week_of" id="switch-table">
+        <thead><tr>
+          <th data-field="week_of">Week of</th>
+          <th data-field="sessions">Sessions</th>
+          <th data-field="switches">Moved to another model</th>
+          <th data-field="per_100_sessions">Per 100 sessions</th>
+          <th data-field="to">Mostly to</th>
+          <th data-field="frustrated">Said it struggled</th>
+          <th data-field="compacted_before">Compacted before the switch</th>
+          <th data-field="ctx_at_switch_k">Context at the switch (median k)</th>
+          <th data-field="restarts">Started over in a new session</th>
+          <th data-field="retries">With the same ask</th>
+        </tr></thead>
+        <tbody data-draw="switchRows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="sec" id="review-signals">
+    <h2>What reviewers found in each model's work</h2>
+    <p class="muted">Checks on the code itself, not on your follow-up messages. First CI run passed is the share of pull requests whose checks were all green on the commit the model opened them with, among those that had CI; a red first run counts whatever its cause. Review-bot comments are the bot's inline comments on pull requests the model opened with gh pr create, with the severity the bot gave each one. A recorded review is counted each time the model recorded a pre-push review, and sorted by what its one-line verdict says it surfaced: big (Critical, Major or High), small (Medium, Minor, Low, a nit or an unlabelled finding) or clean. Rechecks are re-marks after a rebase, a merge or a round of fixes, and are left out of the shares. A model with few pull requests or reviews can move a lot from one week to the next.</p>
+    <div class="two">
+      <div class="sec">
+        <h3 id="bot-by-model">Pull requests the model opened: review-bot comments and the first CI run</h3>
+        <div class="tw">
+          <table class="narrow" data-source="pr_model" data-row-key="model" id="pr-model-table">
+            <thead><tr>
+              <th data-field="model">Model</th>
+              <th data-field="prs">Pull requests</th>
+              <th data-field="cr_share">With comments %</th>
+              <th data-field="per_pr">Comments per pull request</th>
+              <th data-field="critical">Critical</th>
+              <th data-field="major">Major</th>
+              <th data-field="minor">Minor</th>
+              <th data-field="big_per_pr">Major or worse per pull request</th>
+              <th data-field="ci_pass_pct">First CI run passed (%)</th>
+            </tr></thead>
+            <tbody data-draw="prModelRows"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="sec">
+        <h3 id="reviews-by-model">What recorded reviews surfaced before the push</h3>
+        <div class="tw">
+          <table class="narrow" data-source="review_model" data-row-key="model" id="review-model-table">
+            <thead><tr>
+              <th data-field="model">Model</th>
+              <th data-field="fresh">Reviews</th>
+              <th data-field="clean_pct">Clean %</th>
+              <th data-field="small_pct">Small issues %</th>
+              <th data-field="big_pct">Big issues %</th>
+              <th data-field="recheck">Rechecks</th>
+            </tr></thead>
+            <tbody data-draw="reviewModelRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="two">
+    <section class="sec" id="by-context">
+      <h2>Error share by context size at the start of the prompt</h2>
+      <p class="muted">How much was already in context when you sent the prompt. Buckets with fewer than 30 judged prompts are left out.</p>
+      <div class="chart" data-draw="ctxChart" data-source="context"></div>
+    </section>
+    <section class="sec" id="by-effort">
+      <h2>Error share by week and effort level</h2>
+      <p class="muted">The same weekly share, split by the effort level the prompt ran at. Weeks with too few prompts at a level are left out.</p>
+      <div class="legend" data-draw="effortLegend"></div>
+      <div class="chart" data-draw="effortChart" data-source="weekly_effort"></div>
+    </section>
+  </div>
+
+  <section class="sec" id="process">
+    <h2>Behaviour signals by week</h2>
+    <p class="muted">Mined from the transcripts without a judge. Rates per 100 prompts unless marked %. "You're right" counts concessions such as "good catch" or "I should have". Read:edit counts file reads (Read, Grep, cat, sed -n…) per file edit. Fresh session overhead is the context a new session already holds before your first message: system prompt, tool definitions, CLAUDE.md, memory and skills.</p>
+    <div class="tw">
+      <table data-source="weekly" data-row-key="week_of" id="process-table">
+        <thead><tr>
+          <th data-field="week_of">Week of</th>
+          <th data-field="n">Prompts</th>
+          <th data-field="think_med">Thinking / prompt (median tok)</th>
+          <th data-field="think_per_call">Thinking / API call (mean tok)</th>
+          <th data-field="tools_med">Tool calls / prompt (median)</th>
+          <th data-field="tool_err">Tool errors %</th>
+          <th data-field="read_edit">Read : edit</th>
+          <th data-field="apol">Apologies</th>
+          <th data-field="concede">"You're right"</th>
+          <th data-field="interrupt">Interrupted %</th>
+          <th data-field="redirect">Redirected %</th>
+          <th data-field="ctx_med_k">Context at prompt start (median k)</th>
+          <th data-field="compaction">Hit a compaction %</th>
+          <th data-field="start_ctx_k">Fresh session overhead (k tok)</th>
+        </tr></thead>
+        <tbody data-draw="processRows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="sec" id="care">
+    <h2>Did it keep track, and did it check its work?</h2>
+    <p class="muted">Re-read counts the model reading lines of a file that were already in its context, with the file not edited in between: a sign it lost track of what it had. Re-read after a compaction counts lines it had read before the conversation was compacted, which is what the compaction cost. Checked its work is the share of prompts where it edited code and then ran a test, a build, a type check, a linter or the code itself before stopping. Rejected is the share of prompts where you turned down a tool call; it stays near zero if you don't approve calls by hand. Weeks stored before these were measured show a dash.</p>
+    <div class="tw">
+      <table data-source="weekly" data-row-key="week_of" id="care-table">
+        <thead><tr>
+          <th data-field="week_of">Week of</th>
+          <th data-field="reread">Re-read lines already in context (% of file reads)</th>
+          <th data-field="reread_compact">Re-read after a compaction (% of file reads)</th>
+          <th data-field="verify">Checked its work after editing code (%)</th>
+          <th data-field="rejected">Tool call you rejected (% of prompts)</th>
+          <th data-field="compaction">Hit a compaction (% of prompts)</th>
+        </tr></thead>
+        <tbody data-draw="careRows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="sec" id="harness">
+    <h2>What changed around the model</h2>
+    <p class="muted">A model can feel worse because the software around it changed. Each row shows the Claude Code version you used most that week and how many versions you were on, the effort level most prompts ran at, how often a different model answered than the one requested, the share of input read from the prompt cache, and what a new session holds before your first message. A step in any of these in the week the error share moved is the first thing to rule out.</p>
+    <div class="tw">
+      <table data-source="weekly" data-row-key="week_of" id="harness-table">
+        <thead><tr>
+          <th data-field="week_of">Week of</th>
+          <th data-field="cc_version">Claude Code version (most used)</th>
+          <th data-field="cc_versions">Versions used</th>
+          <th data-field="top_effort">Usual effort</th>
+          <th data-field="fallback">Answered by another model (% of calls)</th>
+          <th data-field="cache_hit">Input read from cache (%)</th>
+          <th data-field="start_ctx_k">Fresh session overhead (k tok)</th>
+        </tr></thead>
+        <tbody data-draw="harnessRows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="sec" id="error-types">
+    <h2>What the corrections were about</h2>
+    <p class="muted"><span data-draw="primary" data-source="weekly" data-field="model" data-row="0">—</span> prompts only, all weeks combined, as labelled by the judge.</p>
+    <div class="chart" data-draw="typesChart" data-source="error_types" style="min-height:200px"></div>
+  </section>
+
+  <details id="method">
+    <summary>How this was measured, and its limits</summary>
+    <ul>
+      <li>Only complete weeks are shown. The page is rebuilt from a history kept on your own machine, so it keeps working after Claude Code deletes old transcripts.</li>
+      <li>Source: the Claude Code transcripts on your machine, main threads only. The history keeps numbers per prompt, not the prompt text. Subagents, scheduled runs and SDK sessions are excluded, and duplicated turns from forked sessions are counted once.</li>
+      <li>A prompt is one message you typed, plus everything the model did until your next message. Each prompt carries its model id, effort level, Claude Code version and context size, so trends can be split by them.</li>
+      <li>The judged error share is the main signal. It is a proxy: it counts mistakes you bothered to point out, judged from the last 500 characters of the reply and the first 300 of your answer. The intervals resample whole sessions, since corrections cluster in the sessions that go badly. The judge is a model too: each run has it label a sample twice and the report prints how often the two passes agree, and every label records which judge model and prompt produced it, so a change of judge is flagged rather than read as a change in the model.</li>
+      <li>Keyword counts (apologies, concessions) are cheap but noisy. Thinking tokens come from the API usage field, so they are exact even when thinking text is hidden.</li>
+      <li>What this cannot see: changes in the work itself. Weeks differ in project mix, and harder tasks raise the error share without any change to the model.</li>
+      <li>Review signals: a pull request belongs to the model whose gh pr create call opened it, even if another model pushed later commits. Review-bot comments are read from GitHub at each rebuild; pull requests opened in the last three weeks are read again, older ones keep their last count. Replies and the bot's summary comments are not counted. A recorded review's outcome is read by pattern from the one-line verdict the model wrote, so it is the model's own account of its review.</li>
+      <li>Published trackers measure from the other side, with fixed tasks run on a schedule. This page is one person's real work, which is closer to what you feel but not controlled.</li>
+    </ul>
+  </details>
+</div>
+
+<script>
+  dash.calc('overall', {
+    inputs: ['weekly'],
+    title: 'All weeks combined',
+    description: 'Prompts and judged error share across every week, weighted by judged prompts.',
+    fn: (weekly) => {
+      const turns = d3.sum(weekly, (w) => +w.n);
+      const judged = d3.sum(weekly, (w) => +w.judged);
+      const errors = d3.sum(weekly, (w) => (+w.err / 100) * +w.judged);
+      return [{ turns, judged, err: judged ? Math.round((1000 * errors) / judged) / 10 : null }];
+    },
+  });
+  dash.calc('earlier', {
+    inputs: ['weekly'],
+    title: 'Range of earlier weeks',
+    description: 'Lowest and highest weekly error share, leaving out the latest week.',
+    fn: (weekly) => {
+      const prev = weekly.slice(0, -1).map((w) => +w.err);
+      return prev.length ? [{ lo: d3.min(prev), hi: d3.max(prev) }] : [];
+    },
+  });
+
+  window.ncFmt = d3.format(',');
+  window.ncWeek = (d) => d3.utcFormat('%-d %b')(d3.utcParse('%Y-%m-%d')(d));
+  window.ncLast = (id) => {
+    const d = dash.data(id);
+    return d.status === 'ok' && d.data.length ? { row: d.data[d.data.length - 1], i: d.data.length - 1 } : null;
+  };
+  // One value from a source: its first row, or its latest week when rowAttr is 'last'.
+  window.ncCell = (id, field, fmt, rowAttr) => (el) => {
+    const d = dash.data(id);
+    if (d.status !== 'ok' || !d.data.length) { el.textContent = '—'; return; }
+    if (rowAttr === 'last') {
+      const l = window.ncLast(id);
+      el.setAttribute('data-where', 'week_of=' + l.row.week_of);
+      el.textContent = fmt(l.row[field]);
+    } else {
+      el.textContent = fmt(d.data[0][field]);
+    }
+  };
+  // Models in a stable order: the page's main model first, then the others as they first appear.
+  window.ncModels = () => {
+    const w = dash.data('weekly'), m = dash.data('weekly_model');
+    const out = [];
+    if (w.status === 'ok' && w.data.length) out.push(w.data[0].model);
+    if (m.status === 'ok') m.data.forEach((r) => { if (!out.includes(r.model)) out.push(r.model); });
+    return out;
+  };
+  window.ncColor = (i) => dash.colors[i % dash.colors.length];
+  window.ncLegend = (el, names) => {
+    el.replaceChildren(...names.map((n, i) => {
+      const s = document.createElement('span'), dot = document.createElement('i');
+      dot.style.background = window.ncColor(i);
+      s.append(dot, n);
+      return s;
+    }));
+  };
+  const num = (f) => (v) => f(+v);
+  const pct = num(d3.format('.1f'));
+  const same = (v) => v;
+  dash.draw('since', ncCell('weekly', 'week_of', ncWeek));
+  dash.draw('primary', ncCell('weekly', 'model', same));
+  dash.draw('turns', ncCell('overall', 'turns', num(ncFmt)));
+  dash.draw('turns2', ncCell('overall', 'turns', num(ncFmt)));
+  dash.draw('errAll', ncCell('overall', 'err', pct));
+  dash.draw('errAll2', ncCell('overall', 'err', pct));
+  dash.draw('errLast', ncCell('weekly', 'err', pct, 'last'));
+  dash.draw('errLast2', ncCell('weekly', 'err', pct, 'last'));
+  dash.draw('thinkLast', ncCell('weekly', 'think_med', num(ncFmt), 'last'));
+  dash.draw('lo', ncCell('earlier', 'lo', pct));
+  dash.draw('hi', ncCell('earlier', 'hi', pct));
+  dash.draw('verdict', (el) => {
+    const l = window.ncLast('weekly'); const e = dash.data('earlier');
+    if (!l || e.status !== 'ok' || !e.data.length) { el.textContent = '—'; return; }
+    const v = +l.row.err, r = e.data[0];
+    el.textContent = v > r.hi ? 'above' : v < r.lo ? 'below' : 'inside';
+  });
+</script>
+
+<script>
+  // Shared drawing helpers: a dot-and-whisker chart and a tooltip that lives inside the chart's own drawing.
+  window.ncTip = (el) => {
+    let tip = el.querySelector('.tip');
+    if (!tip) { tip = document.createElement('div'); tip.className = 'tip'; tip.hidden = true; el.appendChild(tip); }
+    return {
+      show(ev, lines) {
+        tip.replaceChildren(...lines.map((t, i) => { const s = document.createElement(i ? 'div' : 'b'); s.textContent = t; return s; }));
+        tip.hidden = false;
+        const b = el.getBoundingClientRect();
+        let x = ev.clientX - b.left + 12, y = ev.clientY - b.top + 12;
+        if (x + tip.offsetWidth > b.width) x = Math.max(0, ev.clientX - b.left - tip.offsetWidth - 12);
+        tip.style.left = x + 'px'; tip.style.top = y + 'px';
+      },
+      hide() { tip.hidden = true; },
+    };
+  };
+
+  window.ncFailed = (el, d) => {
+    if (d.status === 'error') { el.replaceChildren(); const p = document.createElement('p'); p.className = 'muted'; p.textContent = 'Failed to load'; el.appendChild(p); return true; }
+    if (d.status !== 'ok') { el.replaceChildren(); return true; }
+    return false;
+  };
+
+  // series: [{ rows, color, name, offset }], each row has cat, err, lo, hi, n, judged
+  window.ncCI = (el, cats, series, opts = {}) => {
+    el.replaceChildren();
+    const W = Math.max(280, el.clientWidth), H = opts.height || 260;
+    const svg = d3.select(el).append('svg').attr('width', W).attr('height', H).attr('role', 'img').attr('aria-label', opts.label || '');
+    const ymax = Math.ceil((d3.max(series.flatMap((s) => s.rows), (r) => r.hi) || 20) / 5) * 5;
+    const y = d3.scaleLinear().domain([0, ymax]).range([H - 30, 10]).nice();
+    const yAxis = svg.append('g');
+    yAxis.call(d3.axisLeft(y).ticks(5).tickFormat((v) => v + '%'));
+    const ml = yAxis.node().getBBox().width + 10;
+    yAxis.attr('class', 'axis').attr('transform', `translate(${ml},0)`);
+    const x = d3.scalePoint().domain(cats).range([ml + 20, W - 20]).padding(0.4);
+    svg.insert('g', ':first-child').attr('class', 'grid').attr('transform', `translate(${ml},0)`)
+      .call(d3.axisLeft(y).ticks(5).tickSize(-(W - ml - 10)).tickFormat(''));
+    const xa = svg.append('g').attr('class', 'axis').attr('transform', `translate(0,${H - 30})`).call(d3.axisBottom(x).tickFormat(opts.xfmt || ((d) => d)));
+    const step = x.step();
+    const widest = d3.max(xa.selectAll('text').nodes(), (n) => n.getComputedTextLength()) || 0;
+    if (widest > step - 6) xa.selectAll('text').attr('display', (d, i) => (i % Math.ceil((widest + 6) / step) ? 'none' : null));
+    const tip = ncTip(el);
+    series.forEach((s) => {
+      const g = svg.append('g');
+      const dx = s.offset || 0;
+      g.selectAll('line.w').data(s.rows).join('line').attr('class', 'w')
+        .attr('x1', (r) => x(r.cat) + dx).attr('x2', (r) => x(r.cat) + dx).attr('y1', (r) => y(r.lo)).attr('y2', (r) => y(r.hi))
+        .style('stroke', s.color).attr('stroke-width', 2).attr('stroke-linecap', 'round').attr('opacity', 0.55);
+      g.selectAll('circle').data(s.rows).join('circle')
+        .attr('cx', (r) => x(r.cat) + dx).attr('cy', (r) => y(r.err)).attr('r', 5.5).style('fill', s.color)
+        .on('pointermove', (ev, r) => tip.show(ev, [(s.name ? s.name + ' · ' : '') + (opts.xfmt ? opts.xfmt(r.cat) : r.cat), `${r.err}% corrected (95%: ${r.lo}–${r.hi}%)`, `${r.judged} of ${r.n} prompts judged`]))
+        .on('pointerleave', () => tip.hide());
+      if (opts.labels) {
+        g.selectAll('text.v').data(s.rows).join('text').attr('class', 'v')
+          .attr('x', (r) => x(r.cat) + dx + 9).attr('y', (r) => y(r.err) + 4).text((r) => r.err + '%');
+      }
+    });
+    return svg;
+  };
+  window.ncRows = (data, catKey) => data.map((r) => ({ cat: r[catKey], err: +r.err, lo: +r.err_lo, hi: +r.err_hi, n: +r.n, judged: +r.judged }));
+</script>
+
+<script>
+  dash.draw('weeklyChart', (el) => {
+    const d = dash.data('weekly');
+    if (ncFailed(el, d)) return;
+    const rows = ncRows(d.data, 'week_of');
+    ncCI(el, rows.map((r) => r.cat), [{ rows, color: ncColor(0) }], { labels: true, xfmt: ncWeek, label: 'Weekly share of prompts followed by a correction, with 95% intervals' });
+  });
+
+  dash.draw('ctxChart', (el) => {
+    const d = dash.data('context');
+    if (ncFailed(el, d)) return;
+    const rows = ncRows(d.data.filter((r) => +r.judged >= 30), 'context');
+    ncCI(el, rows.map((r) => r.cat), [{ rows, color: ncColor(0) }], { labels: true, height: 240, label: 'Error share by context size bucket' });
+  });
+
+  // Series side by side around each week's tick, however many there are.
+  window.ncSeries = (data, key, names) => names.map((name, i) => ({
+    rows: ncRows(data.filter((r) => r[key] === name), 'week_of'), color: ncColor(i), name,
+    offset: (i - (names.length - 1) / 2) * 12,
+  }));
+  const EFFORTS = ['low', 'medium', 'high', 'xhigh', 'max'];
+  const effortLevels = () => {
+    const d = dash.data('weekly_effort');
+    if (d.status !== 'ok') return [];
+    const seen = [...new Set(d.data.map((r) => r.effort))];
+    return seen.sort((a, b) => (EFFORTS.indexOf(a) + 1 || 99) - (EFFORTS.indexOf(b) + 1 || 99) || d3.ascending(a, b));
+  };
+  dash.draw('effortLegend', (el) => ncLegend(el, effortLevels()));
+  dash.draw('effortChart', (el) => {
+    const d = dash.data('weekly_effort');
+    if (ncFailed(el, d)) return;
+    const cats = [...new Set(d.data.map((r) => r.week_of))].sort();
+    ncCI(el, cats, ncSeries(d.data, 'effort', effortLevels()), { height: 240, xfmt: ncWeek, label: 'Error share by week, split by effort level' });
+  });
+
+  dash.draw('modelLegend', (el) => ncLegend(el, ncModels()));
+  dash.draw('modelChart', (el) => {
+    const d = dash.data('weekly_model');
+    if (ncFailed(el, d)) return;
+    const cats = [...new Set(d.data.map((r) => r.week_of))].sort();
+    ncCI(el, cats, ncSeries(d.data, 'model', ncModels()), { height: 240, xfmt: ncWeek, label: 'Error share by week for each model, with 95% intervals' });
+  });
+
+  const fmts = { n: ncFmt, think_med: ncFmt, think_per_call: ncFmt, out_med: ncFmt, ctx_med_k: d3.format(',.0f'), start_ctx_k: d3.format(',.0f'), ctx_at_switch_k: d3.format(',.0f') };
+  const cell = (r, c) => (c === 'week_of' ? ncWeek(r[c]) : r[c] === '' || r[c] == null ? '—' : fmts[c] ? fmts[c](+r[c]) : r[c]);
+  const fill = (tb, rows, cols, key) => {
+    tb.replaceChildren();
+    rows.forEach((r) => {
+      const tr = document.createElement('tr');
+      cols.forEach((c) => { const td = document.createElement('td'); td.textContent = cell(r, c); tr.appendChild(td); });
+      tr.setAttribute('data-key', key(r));
+      tb.appendChild(tr);
+    });
+  };
+  dash.draw('modelRows', (tb) => {
+    const d = dash.data('weekly_model');
+    if (d.status !== 'ok') { tb.replaceChildren(); return; }
+    const perWeek = d3.rollup(d.data, (v) => v.length, (r) => r.week_of);
+    const order = ncModels();
+    const rows = d.data.filter((r) => perWeek.get(r.week_of) > 1)
+      .sort((a, b) => d3.ascending(a.week_of, b.week_of) || order.indexOf(a.model) - order.indexOf(b.model));
+    fill(tb, rows, ['week_of', 'model', 'n', 'err', 'think_med', 'think_per_call', 'out_med', 'tools_med', 'tool_err', 'read_edit', 'concede', 'redirect', 'ctx_med_k', 'compaction'],
+      (r) => encodeURIComponent(r.week_of) + ',' + encodeURIComponent(r.model));
+  });
+  dash.draw('careRows', (tb) => {
+    const d = dash.data('weekly');
+    if (d.status !== 'ok') { tb.replaceChildren(); return; }
+    fill(tb, d.data, ['week_of', 'reread', 'reread_compact', 'verify', 'rejected', 'compaction'], (r) => r.week_of);
+  });
+  dash.draw('harnessRows', (tb) => {
+    const d = dash.data('weekly');
+    if (d.status !== 'ok') { tb.replaceChildren(); return; }
+    fill(tb, d.data, ['week_of', 'cc_version', 'cc_versions', 'top_effort', 'fallback', 'cache_hit', 'start_ctx_k'], (r) => r.week_of);
+  });
+  // A dashboard whose data predates these columns has nothing to put in the two tables.
+  dash.onData(() => {
+    const d = dash.data('weekly');
+    const has = (c) => d.status === 'ok' && d.data.some((r) => r[c] != null && r[c] !== '');
+    document.querySelectorAll('#care').forEach((s) => { s.hidden = !has('reread') && !has('verify'); });
+    document.querySelectorAll('#harness').forEach((s) => { s.hidden = !has('cc_version'); });
+  });
+  dash.draw('swLast', ncCell('switches', 'switches', (v) => v, 'last'));
+  dash.draw('swSessions', ncCell('switches', 'sessions', (v) => v, 'last'));
+  dash.draw('switchRows', (tb) => {
+    const d = dash.data('switches');
+    if (d.status !== 'ok') { tb.replaceChildren(); return; }
+    fill(tb, d.data, ['week_of', 'sessions', 'switches', 'per_100_sessions', 'to', 'frustrated', 'compacted_before', 'ctx_at_switch_k', 'restarts', 'retries'], (r) => r.week_of);
+  });
+  // No switches dataset (a dashboard older than this section) or no rows: the section steps aside.
+  dash.onData(() => {
+    const d = dash.data('switches');
+    document.querySelectorAll('#switches').forEach((s) => { s.hidden = d.status !== 'ok' || !d.data.length; });
+  });
+  dash.draw('processRows', (tb) => {
+    const d = dash.data('weekly');
+    if (d.status !== 'ok') { tb.replaceChildren(); return; }
+    fill(tb, d.data, ['week_of', 'n', 'think_med', 'think_per_call', 'tools_med', 'tool_err', 'read_edit', 'apol', 'concede', 'interrupt', 'redirect', 'ctx_med_k', 'compaction', 'start_ctx_k'], (r) => r.week_of);
+  });
+
+  dash.draw('typesChart', (el) => {
+    const d = dash.data('error_types');
+    if (ncFailed(el, d)) return;
+    el.replaceChildren();
+    const rows = d.data.map((r) => ({ t: r.error_type.replace(/_/g, ' '), v: +r.turns }));
+    const W = Math.max(280, el.clientWidth), bh = 26, H = rows.length * bh + 10;
+    const svg = d3.select(el).append('svg').attr('width', W).attr('height', H).attr('role', 'img').attr('aria-label', 'Corrections by type');
+    const lab = svg.append('g');
+    lab.selectAll('text').data(rows).join('text').attr('y', (r, i) => i * bh + 17).text((r) => r.t);
+    const ml = (d3.max(lab.selectAll('text').nodes(), (n) => n.getComputedTextLength()) || 0) + 12;
+    const x = d3.scaleLinear().domain([0, d3.max(rows, (r) => r.v) || 1]).range([0, W - ml - 40]);
+    const tip = ncTip(el);
+    svg.append('g').selectAll('rect').data(rows).join('rect')
+      .attr('x', ml).attr('y', (r, i) => i * bh + 5).attr('height', bh - 9).attr('width', (r) => x(r.v)).attr('rx', 3)
+      .style('fill', ncColor(0))
+      .on('pointermove', (ev, r) => tip.show(ev, [r.t, `${r.v} corrections`])).on('pointerleave', () => tip.hide());
+    svg.append('g').selectAll('text').data(rows).join('text').attr('x', (r) => ml + x(r.v) + 6).attr('y', (r, i) => i * bh + 17).text((r) => r.v);
+  });
+</script>
+
+<script>
+  // Review signals: the weekly rows summed per model.
+  dash.calc('pr_model', {
+    inputs: ['prs'],
+    title: 'Review-bot comments by model',
+    description: 'Pull requests each model opened and the review bot\'s inline comments on them, summed over weeks.',
+    fn: (prs) => d3.groups(prs, (r) => r.model).map(([model, rs]) => {
+      const sum = (k) => d3.sum(rs, (r) => +r[k]);
+      const n = sum('prs'), big = sum('cr_critical') + sum('cr_major');
+      return {
+        model, prs: n, cr_share: n ? Math.round((100 * sum('cr_prs')) / n) : null,
+        per_pr: n ? Math.round((10 * sum('cr_comments')) / n) / 10 : null,
+        critical: sum('cr_critical'), major: sum('cr_major'), minor: sum('cr_minor'),
+        big_per_pr: n ? Math.round((100 * big) / n) / 100 : null,
+        ci_pass_pct: sum('ci_prs') ? Math.round((100 * sum('ci_pass')) / sum('ci_prs')) : null,
+      };
+    }),
+  });
+  dash.calc('review_model', {
+    inputs: ['reviews'],
+    title: 'Recorded review outcomes by model',
+    description: 'Recorded pre-push reviews per model, summed over weeks. Shares are of fresh reviews, leaving rechecks out.',
+    fn: (reviews) => d3.groups(reviews, (r) => r.model).map(([model, rs]) => {
+      const sum = (k) => d3.sum(rs, (r) => +r[k]);
+      const fresh = sum('passes') - sum('recheck');
+      const pct = (k) => (fresh ? Math.round((100 * sum(k)) / fresh) : null);
+      return { model, fresh, clean_pct: pct('clean'), small_pct: pct('small'), big_pct: pct('big'), recheck: sum('recheck') };
+    }),
+  });
+
+  const calcRows = (id, cols) => (tb) => {
+    const d = dash.data(id);
+    tb.replaceChildren();
+    if (d.status !== 'ok' || !Array.isArray(d.data)) return;
+    const order = ncModels();
+    [...d.data].sort((a, b) => (order.indexOf(a.model) + 1 || 99) - (order.indexOf(b.model) + 1 || 99)).forEach((r) => {
+      const tr = document.createElement('tr');
+      cols.forEach((c) => { const td = document.createElement('td'); td.textContent = r[c] == null ? '—' : r[c]; tr.appendChild(td); });
+      tr.setAttribute('data-key', encodeURIComponent(r.model));
+      tb.appendChild(tr);
+    });
+  };
+  dash.draw('prModelRows', calcRows('pr_model', ['model', 'prs', 'cr_share', 'per_pr', 'critical', 'major', 'minor', 'big_per_pr', 'ci_pass_pct']));
+  dash.draw('reviewModelRows', calcRows('review_model', ['model', 'fresh', 'clean_pct', 'small_pct', 'big_pct', 'recheck']));
+
+  // With no pull requests and no recorded reviews there is nothing to show, so the section and its halves step aside.
+  dash.onData(() => {
+    const p = dash.data('prs'), r = dash.data('reviews');
+    const empty = (d) => d.status === 'ok' && !d.data.length;
+    document.querySelectorAll('#review-signals').forEach((s) => { s.hidden = empty(p) && empty(r); });
+    document.querySelectorAll('#pr-model-table').forEach((t) => { t.closest('.sec').hidden = empty(p); });
+    document.querySelectorAll('#review-model-table').forEach((t) => { t.closest('.sec').hidden = empty(r); });
+  });
+</script>

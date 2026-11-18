@@ -1,0 +1,10 @@
+{
+  "weekly": {"title": "Main model, prompts by week", "description": "Per-week judged error share and behaviour signals for the main model.", "source": {"kind": "file", "format": "csv", "name": "weekly.csv"}},
+  "weekly_effort": {"title": "Weekly, split by effort", "description": "The same weekly metrics split by effort level, for weeks with enough prompts at that level.", "source": {"kind": "file", "format": "csv", "name": "weekly_by_effort.csv"}},
+  "context": {"title": "By context size", "description": "Metrics bucketed by how many tokens were already in context when the prompt started.", "source": {"kind": "file", "format": "csv", "name": "by_context.csv"}},
+  "error_types": {"title": "Correction types", "description": "How the judge classified each follow-up message that corrected a mistake, main model, all weeks.", "source": {"kind": "file", "format": "csv", "name": "error_types.csv"}},
+  "weekly_model": {"title": "Models by week", "description": "The weekly metrics split by model, for weeks with enough prompts on that model.", "source": {"kind": "file", "format": "csv", "name": "weekly_by_model.csv"}},
+  "prs": {"title": "Pull requests and review-bot comments", "description": "Pull requests each model opened per week, with the review bot's inline comments on them by severity and how many passed their first CI run.", "source": {"kind": "file", "format": "csv", "name": "prs_by_model.csv"}},
+  "reviews": {"title": "Recorded pre-push reviews", "description": "Reviews each model recorded per week, sorted by what the verdict line says they surfaced.", "source": {"kind": "file", "format": "csv", "name": "reviews_by_model.csv"}},
+  "switches": {"title": "Sessions given up on", "description": "Per week: sessions on the main model, how many were moved to another model mid-conversation and what the session looked like at the switch, and how many were started over in a new session.", "source": {"kind": "file", "format": "csv", "name": "switches.csv"}}
+}
