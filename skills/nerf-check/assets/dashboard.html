@@ -28,6 +28,8 @@
   .nc table.narrow { min-width: 420px; }
   .nc #model-table th:nth-child(2), .nc #model-table td:nth-child(2), .nc #switch-table th:nth-child(5), .nc #switch-table td:nth-child(5), .nc #harness-table th:nth-child(2), .nc #harness-table td:nth-child(2), .nc #harness-table th:nth-child(4), .nc #harness-table td:nth-child(4) { text-align: left; }
   .nc .legend:empty { display: none; }
+  .nc #credit a { color: inherit; }
+  .nc #review-signals .two { grid-template-columns: 1fr; }
   .nc th { color: var(--color-fg-muted); font-weight: var(--cds-font-weight-medium); vertical-align: bottom; white-space: normal; }
   .nc details { border-top: 1px solid var(--color-border-line); padding-top: var(--cds-pad-md); }
   .nc summary { cursor: pointer; font-weight: var(--cds-font-weight-medium); }
@@ -243,6 +245,8 @@
       <li>Published trackers measure from the other side, with fixed tasks run on a schedule. This page is one person's real work, which is closer to what you feel but not controlled.</li>
     </ul>
   </details>
+
+  <p class="muted" id="credit">Built with <a href="https://github.com/rig-xyz/nerf-checker">nerf-check</a>, by <a href="https://riglabs.ai/">Rig Labs</a>.</p>
 </div>
 
 <script>

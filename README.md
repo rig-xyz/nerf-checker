@@ -7,6 +7,15 @@ did with it, and whether your next message had to correct it. It reads your loca
 model label each of your follow-up messages (correction, redirect, go-ahead, new task), and builds a week-by-week
 dashboard.
 
+Built by [Rig Labs](https://riglabs.ai/).
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/overview-dark.png">
+  <img alt="The dashboard: prompts analysed, share followed by a correction, and the weekly error share with intervals" src="docs/screenshots/overview-light.png">
+</picture>
+
+<sub>Screenshots show made-up [sample data](docs/sample), not measurements of any model.</sub>
+
 ## Install
 
 Pick one; they all install the same skill.
@@ -52,6 +61,37 @@ on disk and tells you how many prompts it will label before it starts. After tha
 - **What happened to its pull requests**: whether the first CI run passed, review-bot comments if you use CodeRabbit,
   and your team's recorded pre-push reviews if you have such a command. Each is optional; CI needs only `gh`.
 - **A split by effort level and by context size**, the two things that most often explain a "nerf".
+
+## What it looks like
+
+In the sample, the week of 26 October looks like a nerf. The harness table shows what happened: a client release
+that week lowered the effort level and doubled the context a fresh session starts with.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/tracking-and-harness-dark.png">
+  <img alt="Tables: whether the model re-read what it already had and checked its work, and what changed in the harness each week" src="docs/screenshots/tracking-and-harness-light.png">
+</picture>
+
+Models side by side, and the sessions you gave up on:
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/models-and-sessions-dark.png">
+  <img alt="Models side by side by week, and sessions moved to another model or started over" src="docs/screenshots/models-and-sessions-light.png">
+</picture>
+
+What happened to the pull requests each model opened:
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/reviews-dark.png">
+  <img alt="Pull requests per model with review-bot comments and first CI run, and recorded pre-push reviews" src="docs/screenshots/reviews-light.png">
+</picture>
+
+To see the page yourself before running anything:
+
+```
+NERF_CHECK_HOME=docs/sample python3 skills/nerf-check/scripts/preview.py
+open docs/sample/preview.html
+```
 
 ## Privacy
 
@@ -111,4 +151,4 @@ the judge prompt starts a new series, since labels are only comparable under the
 
 ## Licence
 
-Apache-2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
+Apache-2.0, © 2026 [Rig Labs](https://riglabs.ai/). See [LICENSE](LICENSE) and [NOTICE](NOTICE).

@@ -1,0 +1,7 @@
+error_type,turns,model
+broken_or_buggy,148,Model A
+misunderstood,96,Model A
+incomplete_or_lazy,51,Model A
+false_claim,38,Model A
+ignored_instruction,33,Model A
+overreach,12,Model A
