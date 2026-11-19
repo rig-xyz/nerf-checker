@@ -1,8 +1,8 @@
 {
   "name": "nerf-check",
   "displayName": "Nerf Check",
-  "description": "Did the model get worse, or was it just a bad week? Measures a Claude model's behaviour in your own Claude Code work from local transcripts: judged correction rate with intervals, thinking and tool use, models side by side, and review-bot and pre-push review outcomes per model. Builds a weekly dashboard.",
-  "version": "0.3.0",
+  "description": "Did the model get worse, or was it just a bad week? Measures a Claude model's behaviour in your own Claude Code work from local transcripts: judged correction rate with intervals, thinking and tool use, models side by side, and review-bot and pre-push review outcomes per model. Builds a weekly dashboard, and a verdict card you can post.",
+  "version": "0.4.0",
   "author": {
     "name": "Rig Labs",
     "url": "https://riglabs.ai/"

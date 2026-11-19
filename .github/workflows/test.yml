@@ -21,3 +21,5 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: End-to-end test on made-up transcripts
         run: python tests/test_pipeline.py
+      - name: The nerf card on made-up weeks
+        run: python tests/test_card.py

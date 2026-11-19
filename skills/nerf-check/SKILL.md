@@ -99,6 +99,8 @@ If the error share is outside the earlier range, check the harness columns for t
 Then, only if a second model has rows in `csv/weekly_by_model.csv` for that week, one line putting the two side by
 side, with the prompt counts.
 
+If the user wants something to show or post, the nerf-card skill draws the latest week as one picture.
+
 Be straight about what the numbers support. An error share above the earlier range whose interval still overlaps the
 earlier intervals is "higher, not distinguishable from noise", not "the model got worse". If `report.py` printed a
 `NOTE` that the judge changed, say the latest week was measured with a different instrument before comparing it. Two
