@@ -10,10 +10,17 @@ permissions:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        python: ["3.9", "3.13"]
+        include:
+          # 3.9 is the floor the README promises (macOS still ships it as /usr/bin/python3). The newest runner image
+          # has no 3.9 build, so that job stays on the last image that does.
+          - python: "3.9"
+            os: ubuntu-24.04
+          - python: "3.13"
+            os: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
